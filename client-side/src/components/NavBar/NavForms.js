@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { AiOutlineForm } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { changeActiveForm } from "../../store/action/action";
 var vall;
@@ -9,18 +8,19 @@ const NavForms = () => {
 
   const dispatch = useDispatch();
   const val = useSelector((state) => state.root.activeForm);
-  vall = localStorage.getItem('lastTab');
-
+  vall = localStorage.getItem("lastTab");
 
   const changeActiveIndicator = () => {
     dispatch(changeActiveForm(2));
-    localStorage.setItem('lastTab', 2);
+    localStorage.setItem("lastTab", 2);
   };
 
   return (
     <li className="nav-item dropdown">
       <a
-        className={`nav-link dropdown-toggle ${vall == 2 || val === 2? "active-page" : ""}`}
+        className={`nav-link dropdown-toggle ${
+          vall == 2 || val === 2 ? "active-page" : ""
+        }`}
         // href="#"
         id="formsDropdown"
         role="button"
@@ -28,7 +28,6 @@ const NavForms = () => {
         aria-haspopup="true"
         aria-expanded="false"
       >
-       
         Forms
       </a>
       <ul
@@ -44,7 +43,7 @@ const NavForms = () => {
             Manage Employee
           </Link>
         </li>
-       
+
         <li>
           <Link
             className=" dropdown-item"
@@ -63,7 +62,6 @@ const NavForms = () => {
             Manage Department
           </Link>
         </li>
-     
       </ul>
     </li>
   );

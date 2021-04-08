@@ -1,24 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import url from "../../url.json";
-// import "../../assets/css/bootstrap.min.css";
-// import "../../assets/css/main.css";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { userLoginDetails, loggedIn } from "../../store/action/action";
+import "react-toastify/dist/ReactToastify.css";
+import { SuccessToast, ErrorToast } from "../../utils/ReactToastify";
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  // const Selector = useSelector((state) => {
-  //   console.log("State", state);
-  //   return state.root.isLogin;
-  // });
-  // var getting = browser.cookies.get(token);
-  // console.log(getting);
-  // console.log(document.cookie);
+
   const handleSubmit = (values) => {
     axios
       .post(`${url.auth}/login`, {
@@ -31,30 +25,26 @@ const Login = () => {
             params: { typeId: 1 },
           })
           .then((d) => {
-            // setGetRoleType(json.data);
-            // var type;
-            d.data.data?.map(({ name, id }, i) => {
-              if (json.data.user.roleType === id) {
-                // type = name;
-                localStorage.setItem('lastTab', 0);
-                localStorage.setItem('token', json.data.token);
-                console.log("hhhh",json.data.token);
-                dispatch(userLoginDetails({ auth: json.data, roleType: name }));
-                dispatch(loggedIn(true))
+            d.data.data?.map(({ name, constantId }, i) => {
+              if (json.data.user.roleType === constantId) {
+                SuccessToast("🚀 Login Successfully 🥳");
+                localStorage.setItem("lastTab", 0);
+                localStorage.setItem("token", json.data.token);
+                console.log("hhhh", json.data.token);
+                dispatch(
+                  userLoginDetails({ auth: json.data.user, roleType: name })
+                );
+                dispatch(loggedIn(true));
                 navigate("/");
                 console.log(name);
               }
             });
-
-            // console.log("jsonData", json);
-            // setRoleLoading(false);
           });
       })
       .catch((err) => {
-        console.log("Error", err);
+        console.log("Error", err.message);
+        ErrorToast("❌ Login Failed 😪");
       });
-    // e.preventDefault();
-    // navigate(`/dashboard`);
   };
 
   const initialValues = {
@@ -143,11 +133,6 @@ const Login = () => {
                     Login
                   </button>
                 </div>
-                {/* <div className="m-0">
-                  <span className="additional-link">
-                    No account? <Link to="/signup">Signup Now</Link>
-                  </span>
-                </div> */}
               </div>
             </div>
           </div>

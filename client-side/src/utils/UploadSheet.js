@@ -1,6 +1,5 @@
 import React from "react";
 
-
 const PageHeaderFile = (props) => {
   // console.log(props)
   return (
@@ -12,12 +11,8 @@ const PageHeaderFile = (props) => {
         <div className="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
           <div className="daterange-container">
             <div className="date-range">
-              <div id="reportrange">
-              
-                {props.link1}
-              </div>
+              <div id="reportrange">{props.link1}</div>
             </div>
-         
           </div>
         </div>
       </div>

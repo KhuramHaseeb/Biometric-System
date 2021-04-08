@@ -1,36 +1,31 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import url from "../../url.json";
-
 import { AiOutlineForm } from "react-icons/ai";
 import { AiOutlineDelete } from "react-icons/ai";
-import { useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
 import PageHeader from "../../utils/PageHeader";
+import { SuccessToast, ErrorToast } from "../../utils/ReactToastify";
 
 const ManageEmployee = () => {
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
   const [searchVal, setSearchVal] = useState("");
   const [getEmployee, setGetEmployee] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [getDesignation, setGetDesignation] = useState([]);
   const [getDepartment, setGetDepartment] = useState([]);
-  const [tableDataLoading, setTableDataLoading] = useState(false);
- 
+
   const [delId, setDelId] = useState(null);
 
   useEffect(() => {
     axios
       .get(`${url.employee}/getEmployee`, {
-        params: {}, // typeId: 0
+        params: {},
       })
       .then((json) => {
         console.log("jsonData", json.data);
         setGetEmployee(json.data);
         setTableData(json.data);
-        setLoading(false);
       });
     axios
       .get(`${url.designation}/getDesignation`, {
@@ -38,7 +33,6 @@ const ManageEmployee = () => {
       })
       .then((json) => {
         setGetDesignation(json.data);
-        setLoading(false);
       });
     axios
       .get(`${url.department}/getDepartment`, {
@@ -46,10 +40,8 @@ const ManageEmployee = () => {
       })
       .then((json) => {
         setGetDepartment(json.data);
-        setLoading(false);
       });
   }, [delId]);
-
 
   const delEmployee = (id) => {
     setDelId(id);
@@ -58,8 +50,12 @@ const ManageEmployee = () => {
         params: { id },
       })
       .then((json) => {
+        SuccessToast("🗑️ Deleted Successfully");
         console.log("DelEmployee", json.data);
         setDelId(null);
+      })
+      .catch(() => {
+        ErrorToast("❌ Something is wrong");
       });
   };
 
@@ -79,7 +75,6 @@ const ManageEmployee = () => {
         }
       />
       <div className="content-wrapper">
-      
         <div className="row gutters">
           <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
             <div className="card">
@@ -97,26 +92,21 @@ const ManageEmployee = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {
-                        // searchVal ? (
-                        tableData.length === 0 ? (
-                          // tableData?
-                          <tr style={{ textAlign: "center" }} rowSpan="3">
-                            <td
-                              colSpan="7"
-                              className="py-5"
-                              style={{
-                                color: "red",
-                                fontSize: "25px",
-                                fontWeight: "bold",
-                              }}
-                            >
-                              Loading . . .
-                            </td>
-                          </tr>
-                        ) : null
-                        // ) : null
-                      }
+                      {tableData.length === 0 ? (
+                        <tr style={{ textAlign: "center" }} rowSpan="3">
+                          <td
+                            colSpan="7"
+                            className="py-5"
+                            style={{
+                              color: "red",
+                              fontSize: "25px",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            Loading . . .
+                          </td>
+                        </tr>
+                      ) : null}
                       {(searchVal ? tableData : getEmployee)?.map(
                         (
                           {
@@ -148,7 +138,6 @@ const ManageEmployee = () => {
                             </td>
                             <td>
                               {getDepartment?.map(({ name, id }) =>
-                                //  console.log(id == designation)
                                 id == department
                                   ? name
                                       .toLowerCase()
@@ -160,7 +149,6 @@ const ManageEmployee = () => {
                             </td>
                             <td>
                               {getDesignation?.map(({ name, id }) =>
-                                //  console.log(id == designation)
                                 id == designation
                                   ? name
                                       .toLowerCase()
@@ -170,7 +158,7 @@ const ManageEmployee = () => {
                                   : null
                               )}
                             </td>
-                           
+
                             <td width="15%">
                               <Link
                                 to="/dashboard/addEmployee"
@@ -192,14 +180,7 @@ const ManageEmployee = () => {
                                   roleType,
                                 }}
                               >
-                                <button
-                                  className="btn btn-sm btn-primary ml-2"
-                                  // onClick={() =>
-                                  // navigate("/dashboard/manageConstant", {
-                                  //   state: { id, code, name, value, typeId },
-                                  // })
-                                  // }
-                                >
+                                <button className="btn btn-sm btn-primary ml-2">
                                   <AiOutlineForm />
                                 </button>
                               </Link>

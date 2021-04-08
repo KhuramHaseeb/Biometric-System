@@ -9,18 +9,19 @@ const NavForms = () => {
 
   const dispatch = useDispatch();
   const val = useSelector((state) => state.root.activeForm);
-  vall = localStorage.getItem('lastTab');
-
+  vall = localStorage.getItem("lastTab");
 
   const changeActiveIndicator = () => {
     dispatch(changeActiveForm(3));
-    localStorage.setItem('lastTab', 3);
+    localStorage.setItem("lastTab", 3);
   };
 
   return (
     <li className="nav-item dropdown">
       <a
-        className={`nav-link dropdown-toggle ${vall == 3 || val === 3? "active-page" : ""}`}
+        className={`nav-link dropdown-toggle ${
+          vall == 3 || val === 3 ? "active-page" : ""
+        }`}
         // href="#"
         id="formsDropdown"
         role="button"
@@ -28,8 +29,7 @@ const NavForms = () => {
         aria-haspopup="true"
         aria-expanded="false"
       >
-       
-      Attentdence
+        Attentdence
       </a>
       <ul
         className="dropdown-menu dropdown-menu-right"
@@ -41,7 +41,7 @@ const NavForms = () => {
             to={`${url}/uploadAttendenceFile`}
             onClick={changeActiveIndicator}
           >
-          Upload Sheet
+            Upload Sheet
           </Link>
         </li>
         <li>
@@ -50,11 +50,10 @@ const NavForms = () => {
             to={`${url}/attendenceSheet`}
             onClick={changeActiveIndicator}
           >
-            Attendance Sheet 
+            Attendance Sheet
           </Link>
         </li>
-       
-      
+
         <li>
           <Link
             className=" dropdown-item"
@@ -64,7 +63,6 @@ const NavForms = () => {
             Manage Department
           </Link>
         </li>
-     
       </ul>
     </li>
   );

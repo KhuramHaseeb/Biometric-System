@@ -3,15 +3,13 @@ import ActionTypes from "../constant/constant";
 const INITIAL_STATE = {
   activeForm: 0,
   isLogin: false,
-  userDetails: [],
+  userDetails: {},
   employee_data: [],
   employee_Byid:[]
 };
 
 const Reducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
-    // case ActionTypes:
-    //   return {};
     case ActionTypes.changeActiveForm:
       return {
         ...state,

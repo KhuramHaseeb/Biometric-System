@@ -6,21 +6,14 @@ import axios from "axios";
 import url from "../../url.json";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
+import { SuccessToast, ErrorToast } from "../../utils/ReactToastify";
 
 const AddEmployee = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
-  // console.log(new Date(state.joiningDate).getDate())
   const [getDesignation, setGetDesignation] = useState([]);
   const [getDepartment, setGetDepartment] = useState([]);
   const [getRoleType, setGetRoleType] = useState([]);
-  // const [desLoading, setDesLoading] = useState(true);
-  // const [depLoading, setDepLoading] = useState(true);
-  // const [roleLoading, setRoleLoading] = useState(true);
-  // const handleSubmit = (e) => {
-  //   e.preventDefault()
-  //   console.log("Submit");
-  // };
 
   useEffect(() => {
     axios
@@ -29,7 +22,6 @@ const AddEmployee = () => {
       })
       .then((json) => {
         setGetDesignation(json.data);
-        // setDesLoading(false);
       });
     axios
       .get(`${url.department}/getDepartment`, {
@@ -37,7 +29,6 @@ const AddEmployee = () => {
       })
       .then((json) => {
         setGetDepartment(json.data);
-        // setDepLoading(false);
       });
     axios
       .get(`${url.constant}/getConstant_typeId`, {
@@ -46,7 +37,6 @@ const AddEmployee = () => {
       .then((json) => {
         console.log(json.data);
         setGetRoleType(json.data);
-        // setRoleLoading(false);
       });
   }, []);
 
@@ -68,8 +58,6 @@ const AddEmployee = () => {
     joiningDate: state?.joiningDate
       ? new Date(state.joiningDate).toISOString().substr(0, 10)
       : new Date().toISOString().substr(0, 10),
-    // createdDate: state?.createdAt ? new Date(state.createdAt).toLocaleString() : "",
-    // updatedDate: state.createdAt === state.updateAt ? "Not Available" : "no",
     password: "",
     email: state?.email ? state.email : "",
     role: state?.roleType ? state.roleType : "",
@@ -98,8 +86,6 @@ const AddEmployee = () => {
       .required("Please enter the required field")
       .matches(phoneRegExp, "Phone number is not valid"),
     joiningDate: Yup.date().required("Please enter the required field"),
-    // department: Yup.string().required("Please enter the required field"),
-    // designation: Yup.string().required("Please enter the required field"),
     checkIn: Yup.number()
       .min(0, "Must be above 0 characters long")
       .required("CheckIn ID is required"),
@@ -114,24 +100,10 @@ const AddEmployee = () => {
         .max(15, "Password must be 15 characters or less")
         .required("Password is required"),
     }),
-    // password: Yup.object().string()
-    //   .min(8, "Password must be above 8 characters long")
-    //   .max(15, "Password must be 15 characters or less")
-    //   .required("Password is required"),
     email: Yup.string("Enter your email")
       .email("Enter a valid email")
       .required("Email is required"),
     role: Yup.string().required("Email is required"),
-    // .oneOf(
-    //     ["Graphics Designer", "MERN Stack Develper", "Unity Developer"],
-    //     "Department is not valid"
-    //   )
-
-    //   .ensure()
-    //   .when("department", {
-    //     is: undefined,
-    //     then: Yup.string().required("Please enter the required field"),
-    //   }),
   });
 
   const handleSubmit = (values) => {
@@ -156,11 +128,6 @@ const AddEmployee = () => {
       email: values.email,
       roleType: values.role,
       adminId: "",
-      // id: state.id,
-      // code: values.code,
-      // name: values.Name.toLowerCase().replace(/\b(\w)/g, (s) =>
-      //   s.toUpperCase()
-      // ),
     };
     if (values.password !== "") bodyVal["password"] = values.password;
     state
@@ -170,16 +137,24 @@ const AddEmployee = () => {
             body: bodyVal,
           })
           .then((json) => {
-            // formik.resetForm();
-            // setSubmit(!submit);
+            SuccessToast("👏 Updated successfully");
             navigate("/dashboard/manageEmployee");
             console.log("data:", json);
+          })
+          .catch(() => {
+            ErrorToast("❌ Something is wrong");
           })
       : axios
           .post(`${url.employee}/addEmployee`, {
             ...bodyVal,
           })
-          .then((json) => console.log("data:", json));
+          .then((json) => {
+            SuccessToast("👏 New Employee is added successfully");
+            console.log("data:", json);
+          })
+          .catch(() => {
+            ErrorToast("❌ Something is wrong");
+          });
   };
 
   const formik = useFormik({
@@ -399,7 +374,6 @@ const AddEmployee = () => {
                         </small>
                       </div>
                     </div>
-                    {/* {Object.keys(state).length != 0? console.log("true") : console.log("false")} */}
 
                     <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                       <div className="form-group">
@@ -456,7 +430,6 @@ const AddEmployee = () => {
                           name="department"
                           value={formik.values.department}
                           onChange={formik.handleChange}
-                          // aria-describedby="department"
                         >
                           <option value="">
                             {getDesignation.length !== 0
@@ -473,9 +446,6 @@ const AddEmployee = () => {
                             ) : null
                           )}
                         </select>
-                        {/* <small id="department" className="text-danger">
-                          {formik.touched.department && formik.errors.department}
-                        </small> */}
                       </div>
                     </div>
                     <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
@@ -520,9 +490,9 @@ const AddEmployee = () => {
                               ? "Select One"
                               : "Loading . . ."}
                           </option>
-                          {getRoleType.data?.map(({ name, id }, i) =>
+                          {getRoleType.data?.map(({ name, constantId }, i) =>
                             name ? (
-                              <option key={name} value={id}>
+                              <option key={name} value={constantId}>
                                 {name
                                   .toLowerCase()
                                   .replace(/\b(\w)/g, (s) => s.toUpperCase())}
@@ -552,90 +522,12 @@ const AddEmployee = () => {
                             {state.createdAt >= state.updatedAt
                               ? "Not Available"
                               : new Date(state.updatedAt).toLocaleString()}
-                            {/* { toString(state.createdAt) === toString(state.updatedAt)? "Not Available" : state.updatedAt} */}
-                            {/* {new Date(`${state.createdAt}`).valueOf() === new Date(`${state.updateAt}`).valueOf() ? "Not Available" : "no"} */}
                           </label>
                         </div>
-                        {/* <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12"></div> */}
-                        {/*
-                        <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                          <div className="form-group">
-                            <label htmlFor="inputCreatedDate">Created At</label>
-                            <input
-                              type="date"
-                              name="createdDate"
-                              disabled
-                              value={formik.values.createdDate}
-                              onChange={formik.handleChange}
-                              aria-describedby="createdDate"
-                              className={`form-control ${
-                                formik.touched.createdDate &&
-                                Boolean(formik.errors.createdDate)
-                                  ? "is-invalid"
-                                  : ""
-                              }`}
-                              id="inputCreatedDate"
-                            />
-                            <small id="createdDate" className="text-danger">
-                              {formik.touched.createdDate &&
-                                formik.errors.createdDate}
-                            </small>
-                          </div>
-                        </div>
-                        <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                          <div className="form-group">
-                            <label htmlFor="inputUpdatedDate">
-                              Updated At*
-                            </label>
-                            <input
-                              type="date"
-                              name="updatedDate"
-                              disabled
-                              value={formik.values.updatedDate}
-                              onChange={formik.handleChange}
-                              aria-describedby="updatedDate"
-                              className={`form-control ${
-                                formik.touched.updatedDate &&
-                                Boolean(formik.errors.updatedDate)
-                                  ? "is-invalid"
-                                  : ""
-                              }`}
-                              id="inputUpdatedDate"
-                            />
-                            <small id="updatedDate" className="text-danger">
-                              {formik.touched.updatedDate &&
-                                formik.errors.updatedDate}
-                            </small>
-                          </div>
-                        </div> */}
                       </>
                     ) : (
                       ""
                     )}
-                    {/* <div className="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-                    <div className="form-group">
-                      <label htmlFor="inputReadOnly">Readonly Input</label>
-                      <input
-                        className="form-control"
-                        id="inputReadOnly"
-                        type="text"
-                        placeholder="Readonly input"
-                        readOnly
-                      />
-                    </div>
-                  </div> */}
-                    {/* <div className="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-                    <div className="form-group">
-                      <label htmlFor="disabledInput">Disabled Input</label>
-                      <input
-                        type="text"
-                        id="disabledInput"
-                        className="form-control"
-                        placeholder="Disabled input"
-                        disabled
-                      />
-                    </div>
-                  </div> */}
                   </div>
                   <div className="text-center">
                     <button
@@ -651,370 +543,6 @@ const AddEmployee = () => {
               </div>
             </div>
           </div>
-          <>
-            {/* <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-              <div className="card">
-                <div className="card-header">
-                  <div className="card-title">Input sizes</div>
-                </div>
-                <div className="card-body">
-                  <div className="row gutters">
-                    <div className="col-xl-4 col-lg col-md-4 col-sm-4 col-12">
-                      <div className="form-group">
-                        <input
-                          className="form-control form-control-lg"
-                          type="text"
-                          placeholder=".form-control-lg"
-                        />
-                      </div>
-                    </div>
-                    <div className="col-xl-4 col-lg col-md-4 col-sm-4 col-12">
-                      <div className="form-group">
-                        <input
-                          className="form-control"
-                          type="text"
-                          placeholder="Default input"
-                        />
-                      </div>
-                    </div>
-                    <div className="col-xl-4 col-lg col-md-4 col-sm-4 col-12">
-                      <div className="form-group">
-                        <input
-                          className="form-control form-control-sm"
-                          type="text"
-                          placeholder=".form-control-sm"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-              <div className="card">
-                <div className="card-header">
-                  <div className="card-title">Select box sizes</div>
-                </div>
-                <div className="card-body">
-                  <div className="row gutters">
-                    <div className="col-xl-4 col-lg col-md-4 col-sm-4 col-12">
-                      <div className="form-group">
-                        <select className="form-control form-control-lg">
-                          <option>Large select</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div className="col-xl-4 col-lg col-md-4 col-sm-4 col-12">
-                      <div className="form-group">
-                        <select className="form-control">
-                          <option>Default select</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div className="col-xl-4 col-lg col-md-4 col-sm-4 col-12">
-                      <div className="form-group">
-                        <select className="form-control form-control-sm">
-                          <option>Small select</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-              <div className="card">
-                <div className="card-header">
-                  <div className="card-title">Readonly plain text</div>
-                </div>
-                <div className="card-body">
-                  <div className="form-group row">
-                    <label
-                      htmlFor="staticEmail"
-                      className="col-sm-2 col-form-label"
-                    >
-                      Email
-                    </label>
-                    <div className="col-sm-10">
-                      <input
-                        type="text"
-                        readOnly
-                        className="form-control-plaintext"
-                        id="staticEmail"
-                        defaultValue="email@example.com"
-                      />
-                    </div>
-                  </div>
-                  <div className="form-group row">
-                    <label
-                      htmlFor="inputPassword"
-                      className="col-sm-2 col-form-label"
-                    >
-                      Password
-                    </label>
-                    <div className="col-sm-10">
-                      <input
-                        type="password"
-                        className="form-control"
-                        id="inputPassword"
-                        placeholder="Password"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-              <div className="card">
-                <div className="card-header">
-                  <div className="card-title">Readonly inline form</div>
-                </div>
-                <div className="card-body">
-                  <div className="form-inline">
-                    <div className="form-group mb-2">
-                      <label htmlFor="staticEmail2" className="sr-only">
-                        Email
-                      </label>
-                      <input
-                        type="text"
-                        readOnly
-                        className="form-control-plaintext"
-                        id="staticEmail2"
-                        defaultValue="email@example.com"
-                      />
-                    </div>
-                    <div className="form-group mx-sm-3 mb-2">
-                      <label htmlFor="inputPassword2" className="sr-only">
-                        Password
-                      </label>
-                      <input
-                        type="password"
-                        className="form-control"
-                        id="inputPassword2"
-                        placeholder="Password"
-                      />
-                    </div>
-                    <button type="submit" className="btn btn-primary mb-2">
-                      Confirm identity
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-              <div className="card">
-                <div className="card-header">
-                  <div className="card-title">Horizontal form label sizing</div>
-                </div>
-                <div className="card-body">
-                  <div className="form-group row">
-                    <label
-                      htmlFor="colFormLabelSm"
-                      className="col-sm-1 col-form-label col-form-label-sm"
-                    >
-                      Email
-                    </label>
-                    <div className="col-sm-11">
-                      <input
-                        type="email"
-                        className="form-control form-control-sm"
-                        id="colFormLabelSm"
-                        placeholder="col-form-label-sm"
-                      />
-                    </div>
-                  </div>
-                  <div className="form-group row">
-                    <label
-                      htmlFor="colFormLabel"
-                      className="col-sm-1 col-form-label"
-                    >
-                      Email
-                    </label>
-                    <div className="col-sm-11">
-                      <input
-                        type="email"
-                        className="form-control"
-                        id="colFormLabel"
-                        placeholder="col-form-label"
-                      />
-                    </div>
-                  </div>
-                  <div className="form-group row">
-                    <label
-                      htmlFor="colFormLabelLg"
-                      className="col-sm-1 col-form-label col-form-label-lg"
-                    >
-                      Email
-                    </label>
-                    <div className="col-sm-11">
-                      <input
-                        type="email"
-                        className="form-control form-control-lg"
-                        id="colFormLabelLg"
-                        placeholder="col-form-label-lg"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-              <div className="card">
-                <div className="card-header">
-                  <div className="card-title">Textarea</div>
-                </div>
-                <div className="card-body">
-                  <div className="form-group">
-                    <label htmlFor="exampleFormControlTextarea1">
-                      Example textarea
-                    </label>
-                    <textarea
-                      className="form-control"
-                      id="exampleFormControlTextarea1"
-                      rows={3}
-                      defaultValue={""}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-              <div className="card">
-                <div className="card-header">
-                  <div className="card-title">Help text</div>
-                </div>
-                <div className="card-body">
-                  <div className="form-group">
-                    <label htmlFor="inputPassword5">Password</label>
-                    <input
-                      type="password"
-                      id="inputPassword5"
-                      className="form-control"
-                      aria-describedby="passwordHelpBlock"
-                    />
-                    <small
-                      id="passwordHelpBlock"
-                      className="form-text text-muted"
-                    >
-                      Your password must be 8-20 characters long, contain
-                      letters and numbers, and must not contain spaces, special
-                      characters, or emoji.
-                    </small>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-              <div className="card">
-                <div className="card-header">
-                  <div className="card-title">Inline help text</div>
-                </div>
-                <div className="card-body">
-                  <form className="form-inline">
-                    <div className="form-group">
-                      <label htmlFor="inputPassword6">Password</label>
-                      <input
-                        type="password"
-                        id="inputPassword6"
-                        className="form-control mx-sm-3"
-                        aria-describedby="passwordHelpInline"
-                      />
-                      <small id="passwordHelpInline" className="text-muted">
-                        Must be 8-20 characters long.
-                      </small>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
-            <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12"> 
-              <div className="card">
-                <div className="card-header">
-                  <div className="card-title">Inline forms</div>
-                </div>
-                <div className="card-body">
-                  <div className="form-inline">
-                    <label className="sr-only" htmlFor="inlineFormInputName2">
-                      Name
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control mb-2 mr-sm-2"
-                      id="inlineFormInputName2"
-                      placeholder="Jane Doe"
-                    />
-                    <label
-                      className="sr-only"
-                      htmlFor="inlineFormInputGroupUsername2"
-                    >
-                      Username
-                    </label>
-                    <div className="input-group mb-2 mr-sm-2">
-                      <div className="input-group-prepend">
-                        <div className="input-group-text">@</div>
-                      </div>
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="inlineFormInputGroupUsername2"
-                        placeholder="Username"
-                      />
-                    </div>
-                    <div className="form-check mb-2 mr-sm-2">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id="inlineFormCheck"
-                      />
-                      <label
-                        className="form-check-label"
-                        htmlFor="inlineFormCheck"
-                      >
-                        Remember me
-                      </label>
-                    </div>
-                    <button type="submit" className="btn btn-primary mb-2">
-                      Submit
-                    </button>
-                  </div>
-                  <hr />
-                  <div className="form-inline">
-                    <label
-                      className="my-1 mr-2"
-                      htmlFor="inlineFormCustomSelectPref"
-                    >
-                      Preference
-                    </label>
-                    <select
-                      className="custom-select my-1 mr-sm-2"
-                      id="inlineFormCustomSelectPref"
-                    >
-                      <option selected>Choose...</option>
-                      <option value={1}>One</option>
-                      <option value={2}>Two</option>
-                      <option value={3}>Three</option>
-                    </select>
-                    <div className="custom-control custom-checkbox my-1 mr-sm-2">
-                      <input
-                        type="checkbox"
-                        className="custom-control-input"
-                        id="customControlInline"
-                      />
-                      <label
-                        className="custom-control-label"
-                        htmlFor="customControlInline"
-                      >
-                        Remember my preference
-                      </label>
-                    </div>
-                    <button type="submit" className="btn btn-primary my-1">
-                      Submit
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>*/}
-          </>
         </div>
       </div>
     </div>

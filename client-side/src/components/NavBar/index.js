@@ -1,13 +1,8 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import NavSetUp from "./NavSetUp";
 import NavDashboard from "./NavDashboard";
 import NavForms from "./NavForms";
-import Attentdence from './NavAttendence';
-import NavGraphs from "./NavGraphs";
-import NavLoginSignup from "./NavLoginSignup";
-import NavTables from "./NavTables";
-import NavUIElements from "./NavUIElements";
+import Attentdence from "./NavAttendence";
 
 const NavBar = () => {
   return (
@@ -29,14 +24,10 @@ const NavBar = () => {
       </button>
       <div className="collapse navbar-collapse" id="retailAdminNavbar">
         <ul className="navbar-nav m-auto">
-          <NavDashboard routeName="dashboard"/>
+          <NavDashboard routeName="dashboard" />
           <NavSetUp />
           <NavForms />
           <Attentdence />
-          {/* <NavUIElements /> */}
-          {/* <NavTables /> */}
-          {/* <NavGraphs />  */}
-          {/* <NavLoginSignup /> */}
         </ul>
       </div>
     </nav>

@@ -1,17 +1,18 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import user from "../../assets/img/user.png";
 import user2 from "../../assets/img/user2.png";
 import user3 from "../../assets/img/user3.png";
 import notification from "../../assets/img/notification.svg";
 import { AiOutlineUser, AiOutlineSetting } from "react-icons/ai";
-import { FiActivity, FiLogOut } from "react-icons/fi";
+import { FiLogOut } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
-import { loggedIn, signOut } from "../../store/action/action";
+import { signOut } from "../../store/action/action";
 
 const HeaderBar = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const userDetails = useSelector((state) => state.root.userDetails);
+
   return (
     <header className="header">
       <div className="row gutters">
@@ -93,9 +94,11 @@ const HeaderBar = () => {
                 data-toggle="dropdown"
                 aria-haspopup="true"
               >
-                <span className="user-name">Nathan James</span>
+                <span className="user-name">{`${userDetails.auth?.firstName} ${userDetails.auth?.lastName}`}</span>
                 <span className="avatar">
-                  NJ
+                  {`${userDetails?.auth?.firstName.charAt(
+                    0
+                  )}${userDetails?.auth?.lastName.charAt(0)}`}
                   <span className="status online" />
                 </span>
               </Link>
@@ -108,30 +111,34 @@ const HeaderBar = () => {
                     <div className="header-user">
                       <img src={user} alt="Reatil Admin" />
                     </div>
-                    <h5>Nathan James</h5>
-                    <p>Balance - $35,000</p>
+                    <h5>{`${userDetails?.auth?.firstName} ${userDetails?.auth?.lastName}`}</h5>
+                    <p>{userDetails?.roleType}</p>
                   </div>
-                  <Link to="/user-profile">
+                  <Link
+                    to={`/${
+                      userDetails?.roleType == "Admin"
+                        ? "dashboard"
+                        : "udashboard"
+                    }/user-profile`}
+                  >
                     <i>
                       <AiOutlineUser />
                     </i>{" "}
                     My Profile
                   </Link>
-                  <Link to="/pricing">
+                  <Link
+                    to={`/${
+                      userDetails.roleType == "Admin"
+                        ? "dashboard"
+                        : "udashboard"
+                    }/setting`}
+                  >
                     <i>
                       <AiOutlineSetting />
                     </i>{" "}
                     Account Settings
                   </Link>
-                  {/* <Link to="/tasks">
-                      <i><FiActivity/></i> Activity Logs
-                    </Link> */}
-                  <Link
-                    to="/login"
-                    onClick={()=>
-                      dispatch(signOut())
-                    }
-                  >
+                  <Link to="/login" onClick={() => dispatch(signOut())}>
                     <i>
                       <FiLogOut />
                     </i>{" "}

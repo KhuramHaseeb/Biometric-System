@@ -7,6 +7,7 @@ import PageHeader from "../../../utils/PageHeader";
 import { useLocation, useNavigate } from "react-router";
 import { Link } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
+import { SuccessToast, ErrorToast } from "../../../utils/ReactToastify";
 
 const AddConstant = () => {
   const navigate = useNavigate();
@@ -24,7 +25,6 @@ const AddConstant = () => {
   };
 
   useEffect(() => {
-    // if (!state) {
     axios
       .get(`${url.constant}/getConstant_typeId`, {
         params: { typeId: 0 },
@@ -34,23 +34,7 @@ const AddConstant = () => {
         setGetConstant_typeId(json.data);
         setLoading(false);
       });
-    // }
   }, [submit]);
-
-  // const typeName = [
-  //   {
-  //     id: 1,
-  //     name: "user",
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "holiday",
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "Etc",
-  //   },
-  // ];
 
   const validationSchema = Yup.object().shape({
     id: Yup.number().required("Please enter the required field"),
@@ -63,12 +47,10 @@ const AddConstant = () => {
       .max(15, "Must be 15 characters or less")
       .required("Please enter the required field"),
     value: Yup.number().required("Please enter the required field"),
-    // typeId: Yup.number().required("Please enter the required field"),
   });
 
   const handleSubmit = (values) => {
     console.log(values);
-    // state = null
     state
       ? axios
           .post(`${url.constant}/updateConstant_typeId`, {
@@ -85,10 +67,12 @@ const AddConstant = () => {
             },
           })
           .then((json) => {
-            // formik.resetForm();
-            // setSubmit(!submit);
+            SuccessToast("👏 Updated successfully");
             navigate("/dashboard/manageConstant");
             console.log("data:", json);
+          })
+          .catch((err) => {
+            ErrorToast("❌ Something is wrong");
           })
       : axios
           .post(`${url.constant}/addConstant`, {
@@ -102,11 +86,13 @@ const AddConstant = () => {
             typeId: values.typeId,
           })
           .then((json) => {
-            // if (window.confirm("Reset?")) {
+            SuccessToast("👏 New constant is added successfully");
             formik.resetForm();
             setSubmit(!submit);
-            // }
             console.log("data:", json);
+          })
+          .catch((err) => {
+            ErrorToast("❌ Something is wrong");
           });
   };
 
@@ -138,37 +124,6 @@ const AddConstant = () => {
               <div className="card-body">
                 <form onSubmit={formik.handleSubmit}>
                   <div className="row gutters">
-                    {/* <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                      <div className="form-group">
-                        <label htmlFor="inputConstantId">Constant ID</label>
-                        <input
-                          type="text"
-                          className={`form-control `}
-                          // ${
-                          //   formik.touched.constantId && Boolean(formik.errors.constantId)
-                          //     ? "is-invalid"
-                          //     : ""
-                          // }`}
-                          id="inputConstantId"
-                          name="constantId"
-                          placeholder="Enter ID"
-                          readOnly
-                          // value={formik.values.Id}
-                          value={
-                            state?.constantId
-                              ? state.constantId
-                              : getConstant_typeId.length !== 0
-                              ? getConstant_typeId.nextId
-                              : 1
-                          }
-                          // onChange={formik.handleChange}
-                          aria-describedby="constantId"
-                        />
-                        {/* <small id="constantId" className="text-danger">
-                          {formik.touched.constantId && formik.errors.constantId}
-                        </small> 
-                      </div>
-                    </div> */}
                     <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                       <div className="form-group">
                         <label htmlFor="inputId">ID*</label>
@@ -183,13 +138,6 @@ const AddConstant = () => {
                           name="id"
                           placeholder="Enter ID"
                           value={formik.values.id}
-                          // value={
-                          //   state?.id
-                          //     ? state.id
-                          //     : getConstant_typeId.length !== 0
-                          //     ? getConstant_typeId.nextId
-                          //     : 0
-                          // }
                           onChange={formik.handleChange}
                           aria-describedby="Id"
                         />
@@ -275,26 +223,23 @@ const AddConstant = () => {
                           id="inputtypeId"
                           name="typeId"
                           value={formik.values.typeId}
-                          // defaultValue= {state.typeId}
                           onChange={formik.handleChange}
                           aria-describedby="typeId"
                         >
                           <option value="">
                             {!loading ? "Select One" : "Loading . . ."}
                           </option>
-                          {getConstant_typeId.data?.map(({ name, id }, i) =>
-                            name ? (
-                              <option key={id} value={id}>
-                                {name
-                                  .toLowerCase()
-                                  .replace(/\b(\w)/g, (s) => s.toUpperCase())}
-                              </option>
-                            ) : null
+                          {getConstant_typeId.data?.map(
+                            ({ name, constantId }, i) =>
+                              name ? (
+                                <option key={constantId} value={constantId}>
+                                  {name
+                                    .toLowerCase()
+                                    .replace(/\b(\w)/g, (s) => s.toUpperCase())}
+                                </option>
+                              ) : null
                           )}
                         </select>
-                        {/* <small id="typeId" className="text-danger">
-                          {formik.touched.typeId && formik.errors.typeId}
-                        </small> */}
                       </div>
                     </div>
                   </div>

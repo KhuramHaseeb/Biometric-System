@@ -1,25 +1,23 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import url from "../../url.json";
+import { SuccessToast, ErrorToast } from "../../utils/ReactToastify";
 
 const ForgotPass = () => {
-  const navigate = useNavigate();
   const handleSubmit = (values) => {
     axios
       .post(`${url.auth}/recover`, { email: values.userName })
       .then((json) => {
         console.log("jsonData", json);
-        // dispatch(userLogin(true))
-        navigate("/login");
+        SuccessToast("👉 Please check your email inbox for reset link 📧");
       })
       .catch((err) => {
         console.log("Error", err);
+        ErrorToast("❌ Email is invalid");
       });
-    // e.preventDefault();
-    // navigate(`/dashboard`);
   };
 
   const initialValues = {
@@ -29,7 +27,6 @@ const ForgotPass = () => {
   const validationSchema = Yup.object().shape({
     userName: Yup.string()
       .min(8, "Must be above 8 characters long")
-      // .max(15, "Must be 15 characters or less")
       .required("Please enter the required field"),
   });
 
@@ -68,7 +65,7 @@ const ForgotPass = () => {
                     }`}
                     id="inputUserName"
                     name="userName"
-                    placeholder="Enter User Name"
+                    placeholder="Enter Email"
                     value={formik.values.userName}
                     onChange={formik.handleChange}
                     aria-describedby="userName"

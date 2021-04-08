@@ -2,14 +2,9 @@ const EmployeeSchema = require("../model/employee");
 const { sendEmail } = require("../utils/sendmail");
 const path = require("path");
 require("dotenv").config();
-// const sgMail = require('@sendgrid/mail');
-// sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // @route POST api/auth/register
-// @desc Register user
-// @access Public
 exports.register = (req, res) => {
-  // console.log("Register", req.body);
   // Make sure this account doesn't already exist
   EmployeeSchema.findOne({ email: req.body.email })
     .then((user) => {
@@ -24,7 +19,6 @@ exports.register = (req, res) => {
       newUser
         .save()
         .then((user) => {
-          // res.cookie("token", token, { expire: new Date() + 9999 });
           res.status(200).json({ token: user.generateJWT(), user: user });
         })
         .catch((err) => {
@@ -41,14 +35,9 @@ exports.register = (req, res) => {
 };
 
 // @route POST api/auth/login
-// @desc Login user and return JWT token
-// @access Public
 exports.login = (req, res) => {
-  // console.log("Login", req.body);
-
   EmployeeSchema.findOne({ userName: req.body.userName }, { email: 1 }).then(
     (d) => {
-      // console.log(d);
       if (!d)
         return res.status(401).json({
           msg:
@@ -59,7 +48,6 @@ exports.login = (req, res) => {
 
       EmployeeSchema.findOne({ email: d.email })
         .then((user) => {
-            // console.log(user);
           if (!user)
             return res.status(401).json({
               msg:
@@ -74,8 +62,7 @@ exports.login = (req, res) => {
               .status(401)
               .json({ message: "Invalid email or password" });
           const token = user.generateJWT();
-          // console.log(`token`,token);
-          res.cookie("token", token, { httpOnly: true })
+          res.cookie("token", token, { httpOnly: true });
           return res.send({
             token: token,
             user: {
@@ -86,24 +73,21 @@ exports.login = (req, res) => {
               lastName: user.lastName,
             },
           });
-          // res.cookie("token", token, { expire: new Date() + 9999 });
-          // Login successful, write token, and send back user
-          // return res
-          //   .status(200)
-          //   .json({ token: user.generateJWT(), user: user });
         })
         .catch((err) => res.status(500).json({ message: err.message }));
     }
   );
 };
 
-// ===PASSWORD RECOVER AND RESET
+exports.logout = (req, res) => {
+  console.log("logout");
+  res
+    .cookie("token", "", { expires: new Date(0) })
+    .json({ message: "Signout success!" });
+};
 
-// @route POST api/auth/recover
-// @desc Recover Password - Generates token and Sends password reset email
-// @access Public
+// PASSWORD RECOVER AND RESET
 exports.recover = (req, res) => {
-  // console.log("Recover", req.body);
   EmployeeSchema.findOne({ email: req.body.email })
     .then((user) => {
       if (!user)
@@ -124,7 +108,6 @@ exports.recover = (req, res) => {
           // send email
           let link =
             process.env.CLIENT_URL + "/reset-pwd/" + user.resetPasswordToken;
-          // console.log(link);
           const mailOptions = {
             to: user.email,
             from: `Customer Support <${process.env.MAIL_USER_NAME}>`,
@@ -134,17 +117,13 @@ exports.recover = (req, res) => {
                     If you did not request this, please ignore this email and your password will remain unchanged.\n`,
           };
 
-          // console.log(mailOptions);
           sendEmail(mailOptions, (error, result) => {
             if (error) return res.status(500).json({ message: error.message });
           });
-          // sgMail.send(mailOptions, (error, result) => {
-          //     if (error) return res.status(500).json({message: error.message});
 
           res.status(200).json({
             message: "A reset email has been sent to " + user.email + ".",
           });
-          // });
         })
         .catch((err) => res.status(500).json({ message: err.message }));
     })
@@ -152,32 +131,7 @@ exports.recover = (req, res) => {
 };
 
 // @route POST api/auth/reset
-// @desc Reset Password - Validate password reset token and shows the password reset view
-// @access Public
-// exports.reset = (req, res) => {
-//   console.log("reset");
-//   EmployeeSchema.findOne({
-//     resetPasswordToken: req.params.token,
-//     resetPasswordExpires: { $gt: Date.now() },
-//   })
-//     .then((user) => {
-//       if (!user)
-//         return res
-//           .status(401)
-//           .json({ message: "Password reset token is invalid or has expired." });
-
-//       //Redirect user to form with the email address
-//       // res.redirect("www.google.com")
-//       // res.sendFile('login.html', { root: path.join(__dirname, '../public/views/') });
-//     })
-//     .catch((err) => res.status(500).json({ message: err.message }));
-// };
-
-// @route POST api/auth/reset
-// @desc Reset Password
-// @access Public
 exports.resetPassword = (req, res) => {
-  // console.log(req.cookies.token);
   EmployeeSchema.findOne({
     resetPasswordToken: req.params.token,
     resetPasswordExpires: { $gt: Date.now() },
@@ -208,11 +162,7 @@ exports.resetPassword = (req, res) => {
         sendEmail(mailOptions, (error, result) => {
           if (error) return res.status(500).json({ message: error.message });
         });
-        // sgMail.send(mailOptions, (error, result) => {
-        //     if (error) return res.status(500).json({message: error.message});
-
         res.status(200).json({ message: "Your password has been updated." });
-        // });
       });
     })
     .catch((err) => res.status(401).json({ message: err.message }));

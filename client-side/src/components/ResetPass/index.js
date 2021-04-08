@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
@@ -12,16 +12,10 @@ const ResetPass = () => {
   const handleSubmit = (values) => {
     axios
       .post(`${url.auth}/reset/${token}`, {
-        // params: {
-        //   foo: 'bar'
-        // },
-        // body: {
         password: values.password,
-        // }
       })
       .then((json) => {
         console.log("jsonData", json);
-        // dispatch(userLogin(true))
         navigate("/login");
       })
       .catch((err) => {
@@ -117,11 +111,6 @@ const ResetPass = () => {
                     Change Password
                   </button>
                 </div>
-                {/* <div className="m-0">
-                  <span className="additional-link">
-                    No account? <Link to="/signup">Signup Now</Link>
-                  </span>
-                </div> */}
               </div>
             </div>
           </div>

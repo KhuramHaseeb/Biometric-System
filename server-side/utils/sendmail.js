@@ -4,7 +4,6 @@ let env = process.env;
 exports.sendEmail = (mailData) => {
   console.log(env.MAIL_USER_NAME, env.MAIL_USER_PASSWORD);
   const transporter = nodeMailer.createTransport({
-    // service: "approcx",
     host: "webmail.approcx.com",
     port: 25,
     secure: false,

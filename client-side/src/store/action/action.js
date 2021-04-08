@@ -1,6 +1,6 @@
-
 import ActionTypes from "../constant/constant";
-
+import axios from "axios";
+import url from "../../url.json";
 
 import APIservice from "../../components/APIservice/allApi";
 let ApiService = new APIservice();
@@ -11,19 +11,22 @@ export function changeActiveForm(val) {
 }
 
 export function userLoginDetails(val) {
-  // console.log(val);
   return (dispatch) => dispatch({ type: "userDetails", payload: val });
 }
 
 export function loggedIn(val) {
-  // console.log(val);
   return (dispatch) => dispatch({ type: "loggedIn", payload: val });
 }
 
-export function signOut() {
-  // console.log(val);
-  localStorage.clear();
-  return (dispatch) => dispatch({ type: "loggedIn", payload: false });
+export async function signOut() {
+  try {
+    const res = await axios.post(url.logout);
+    console.log(res.json);
+    localStorage.clear();
+    return (dispatch) => dispatch({ type: "loggedIn", payload: false });
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 

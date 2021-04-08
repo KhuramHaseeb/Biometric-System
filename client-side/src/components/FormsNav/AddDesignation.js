@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
@@ -6,6 +6,7 @@ import url from "../../url.json";
 import PageHeader from "../../utils/PageHeader";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
+import { SuccessToast, ErrorToast } from "../../utils/ReactToastify";
 
 const AddDesignation = () => {
   const navigate = useNavigate();
@@ -16,7 +17,6 @@ const AddDesignation = () => {
   };
 
   const validationSchema = Yup.object().shape({
-    // Id: Yup.number().required("Please enter the required field"),
     code: Yup.string()
       .min(3, "Must be above 3 characters long")
       .max(15, "Must be 15 characters or less")
@@ -42,10 +42,12 @@ const AddDesignation = () => {
             },
           })
           .then((json) => {
-            // formik.resetForm();
-            // setSubmit(!submit);
+            SuccessToast("👏 Updated successfully");
             navigate("/dashboard/manageDesignation");
             console.log("data:", json);
+          })
+          .catch(() => {
+            ErrorToast("❌ Something is wrong");
           })
       : axios
           .post(`${url.designation}/addDesignation`, {
@@ -53,8 +55,12 @@ const AddDesignation = () => {
             Name: values.Name,
           })
           .then((json) => {
+            SuccessToast("👏 New Designation is added successfully");
             formik.resetForm();
             console.log("data:", json);
+          })
+          .catch(() => {
+            ErrorToast("❌ Something is wrong");
           });
   };
 
@@ -86,28 +92,6 @@ const AddDesignation = () => {
               <div className="card-body">
                 <form onSubmit={formik.handleSubmit}>
                   <div className="row gutters">
-                    {/* <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                      <div className="form-group">
-                        <label htmlFor="inputFirstName">ID*</label>
-                        <input
-                          type="text"
-                          className={`form-control ${
-                            formik.touched.Id && Boolean(formik.errors.Id)
-                              ? "is-invalid"
-                              : ""
-                          }`}
-                          id="inputId"
-                          name="Id"
-                          placeholder="Enter ID"
-                          value={formik.values.Id}
-                          onChange={formik.handleChange}
-                          aria-describedby="Id"
-                        />
-                        <small id="Id" className="text-danger">
-                          {formik.touched.Id && formik.errors.Id}
-                        </small>
-                      </div>
-                    </div> */}
                     <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
                       <div className="form-group">
                         <label htmlFor="inputcode">Code*</label>

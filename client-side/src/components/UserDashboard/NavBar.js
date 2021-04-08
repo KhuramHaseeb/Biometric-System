@@ -1,8 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import NavDashboard from "../NavBar/NavDashboard";
-// import NavSetUp from "./NavSetUp";
-// import NavForms from "./NavForms";
 
 const NavBar = () => {
   return (
@@ -24,9 +21,7 @@ const NavBar = () => {
       </button>
       <div className="collapse navbar-collapse" id="retailAdminNavbar">
         <ul className="navbar-nav m-auto">
-          <NavDashboard routeName="udashboard"/>
-          {/* <NavSetUp />
-          <NavForms /> */}
+          <NavDashboard routeName="udashboard" />
         </ul>
       </div>
     </nav>

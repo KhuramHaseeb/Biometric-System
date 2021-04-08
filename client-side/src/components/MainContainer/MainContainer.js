@@ -4,22 +4,16 @@ import notification_danger from "../../assets/img/notification-danger.svg";
 import notification_info from "../../assets/img/notification-info.svg";
 import star_selected from "../../assets/img/star-selected.svg";
 import PageHeader from "../../utils/PageHeader";
+import { useSelector } from "react-redux";
 
 const MainContainer = () => {
+  const userDetails = useSelector((state) => state.root.userDetails);
   return (
     <div className="main-container">
       <PageHeader
-        title="Dashboard"
-        // link1={
-        //   <Link to="/dashboard/manageConstant">
-        //     <div id="reportrange">
-        //       <i style={{ margin: "auto" }}>
-        //         <FaArrowLeft style={{ paddingRight: "2px" }} />
-        //         Manage Constant
-        //       </i>
-        //     </div>
-        //   </Link>
-        // }
+        title={`Welcome back, ${
+          userDetails.auth.firstName + " " + userDetails.auth.lastName
+        }`}
       />
       <div className="content-wrapper">
         {/* ************************** Visitors and Revenue

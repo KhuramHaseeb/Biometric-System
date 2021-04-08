@@ -22,7 +22,6 @@ exports.addDepartment = async (req, res) => {
       console.log("Err ", err);
       res.send(err);
     });
-  // res.send(req.body)
 };
 
 exports.delDepartment = async (req, res) => {
@@ -50,9 +49,6 @@ exports.getDepartment = async (req, res) => {
 };
 
 exports.updateDepartment = async (req, res) => {
-  // console.log(req.query);
-  // console.log(req.body.params);
-  // console.log(req.body.body);
   DepartmentSchema.findOneAndUpdate(req.body.params, req.body.body)
     .then(async (data) => {
       res.send(data);
