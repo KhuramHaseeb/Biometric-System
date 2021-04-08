@@ -1,0 +1,20 @@
+.dispay-data{
+    margin-left: 23px;
+    font-size: larger;
+    font-weight: 500;
+}
+.main-employ-list{
+    padding: .7rem 1.5rem;
+    background: #f4f5fb;
+    border-radius: 10px 10px 10px 10px;
+    
+}
+.employee-head{
+    background: #5f7082;
+    border-color: #5f7082;
+    color: #ffffff;
+}
+
+.table-bordered th {
+    border: none !important;
+}

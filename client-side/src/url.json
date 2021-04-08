@@ -1,0 +1,8 @@
+{
+    "main" : "http://localhost:3001",
+    "employee" : "http://localhost:3001/employee",
+    "constant" : "http://localhost:3001/constant",
+    "department" : "http://localhost:3001/department",
+    "designation" : "http://localhost:3001/designation",
+    "auth" : "http://localhost:3001/auth"
+}
