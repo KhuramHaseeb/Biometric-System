@@ -3,8 +3,11 @@ const mongoose = require("mongoose");
 const excelToJson = require("convert-excel-to-json");
 const checkInSchema = require("../model/checkInSchema");
 const checkOutSchema = require("../model/checkOutSchema");
-const moment =require('moment-timezone');
+
 const EmployeeEntry = require("../model/employee");
+const moment =require("moment");
+
+
 exports.employee = (req, res) => {
   console.log(req.body);
 
@@ -45,9 +48,11 @@ exports.employeeList = (req, res) => {
     });
 };
 exports.checkinUser = (req, res, next) => {
-  // console.log(`req`,req);
+  
   filePath = __basedir + "/checkinUser/" + req.file.filename;
   let results = {};
+   const dateDiffInMs = 1 * 24 * 60 * 60000
+
   const excelData = excelToJson({
     sourceFile: filePath,
     sheets: [
@@ -69,16 +74,17 @@ exports.checkinUser = (req, res, next) => {
       },
     ],
   });
-  // console.log(`checkinUser`, excelData);
+  // console.log(`liopn`, excelData);
   excelData.Customers.map((checkin, i) => {
+    // console.log(`liopn`,checkin.date);
     const checkUser = new checkInSchema({
       // _id:new mongoose.Types.ObjectId(),
 
       checkIn: checkin.checkinId,
-      checkinTime: checkin.checkinTime,
-      checkinDate: moment.tz(checkin.date,"Asia/Islamabad").format('MM-DD-YYYY'),
+      checkinTime: moment(checkin.checkinTime).add(32,"m").format("LT"),
+      checkinDate: moment(checkin.date).add(1, 'hours').format('l'),
     });
-    console.log("ll",checkUser)
+    // console.log("ll",checkUser)
     checkUser.save((err, result) => {
       if (err) {
         return res.status(400).json({
@@ -126,8 +132,10 @@ exports.checkoutUser = (req, res, next) => {
       // _id:new mongoose.Types.ObjectId(),
 
       checkOut: checkout.CheckoutID,
-      checkoutTime: checkout.CheckoutTime,
-      checkoutDate: moment.tz(checkout.date,"Asia/Islamabad").format('MM-DD-YYYY')
+     
+      checkoutTime:  moment(checkout.CheckoutTime).add(32,"m").format("LT"),
+     
+      checkoutDate: moment(checkout.date).add(1, 'hours').format('l')
     });
     checkUser.save((err, result) => {
       // console.log(`kk`, result);

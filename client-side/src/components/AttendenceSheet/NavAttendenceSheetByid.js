@@ -2,7 +2,7 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { employeByid } from "../../store/action/action";
-import PageHeader from "../../utils/PageHeader";
+
 import '../../css/employeeByid.css';
 import {
   
@@ -37,7 +37,7 @@ const AttendenceSheetById = () => {
       return (
         <tr>
           <td>{result.checkout_id}</td>
-          <td>{new Date(result.checkoutTime).toLocaleTimeString()}</td>
+          <td>{result.checkoutTime}</td>
           <td>{result.checkoutDate}</td>
         </tr>
       );
@@ -60,7 +60,7 @@ const AttendenceSheetById = () => {
       return (
         <tr>
           <td>{result.checkIn_id}</td>
-          <td>{new Date(result.checkinTime).toLocaleTimeString()}</td>
+          <td>{result.checkinTime}</td>
           <td>{result.checkinDate}</td>
         </tr>
       );

@@ -1,11 +1,12 @@
-
 import PageHeader from "../../utils/UploadSheet";
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import axios from 'axios';
+
+import axios from "axios";
+import { SuccessToast, ErrorToast } from "../../utils/ReactToastify";
 import "../../css/uploadFile.css";
+import { Link } from "react-router-dom";
 const UploadEmployeeFile = () => {
-  const [checkinFile, setcheckinFile] = useState('');
+  const [checkinFile, setcheckinFile] = useState("");
   const [checkout, setCheckoutFile] = useState("");
 
   const handlecheckinFile = (e) => {
@@ -16,33 +17,34 @@ const UploadEmployeeFile = () => {
   };
   const sumbitfile1 = (e) => {
     e.preventDefault();
-   
-    const formData = new FormData()
-    formData.append('checkInUser', checkinFile)
+
+    const formData = new FormData();
+    formData.append("checkInUser", checkinFile);
     axios
-    .post(`http://localhost:3001/Checkinlist`, formData)
-    .then(res => console.log(res.body))
-    .catch(err => {
-        console.log(err); 
-    }); 
-
-   
+      .post(`http://localhost:3001/Checkinlist`, formData)
+      .then((res) => {
+        SuccessToast("👏 Updated successfully");
+        console.log(res.body);
+      })
+      .catch(() => {
+        ErrorToast("❌ Something is wrong");
+      });
   };
-
 
   const sumbitfile2 = (e) => {
     e.preventDefault();
-   
-    const formData = new FormData()
-    formData.append('checkoutUser', checkout)
-    axios
-    .post(`http://localhost:3001/Checkoutlist`, formData)
-    .then(res => console.log(res.body))
-    .catch(err => {
-        console.log(err); 
-    }); 
 
-   
+    const formData = new FormData();
+    formData.append("checkoutUser", checkout);
+    axios
+      .post(`http://localhost:3001/Checkoutlist`, formData)
+      .then((res) => {
+        SuccessToast("👏 Updated successfully");
+        console.log(res.body);
+      })
+      .catch(() => {
+        ErrorToast("❌ Something is wrong");
+      });
   };
   return (
     <div className="main-container">
@@ -59,9 +61,7 @@ const UploadEmployeeFile = () => {
                       <input
                         name="checkInUser"
                         id="checkInUser"
-                        onChange={
-                            handlecheckinFile
-                        }
+                        onChange={handlecheckinFile}
                         type="file"
                         accept=".xlsx"
                       />
@@ -70,7 +70,7 @@ const UploadEmployeeFile = () => {
                     <div className="update">
                       <button
                         onClick={(e) => {
-                            sumbitfile1(e);
+                          sumbitfile1(e);
                         }}
                         className="btn btn-primary"
                       >
@@ -93,11 +93,33 @@ const UploadEmployeeFile = () => {
                     <div className="update">
                       <button
                         onClick={(e) => {
-                            sumbitfile2(e);
+                          sumbitfile2(e);
                         }}
                         className="btn btn-primary"
                       >
                         Upload
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="row">
+                  <div className="col-6">
+                    <div className="moving-button1">
+                      <button className="btn btn-secondary">
+                        <Link to={`/dashboard/`} class="btn btn-secondary btn-sm">
+                          Back
+                        </Link>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="col-6">
+                    <div className="moving-button2">
+                      <button className="btn btn-secondary">
+                        <Link to={`/dashboard/attendenceSheet`} class="btn btn-secondary btn-sm">
+                          Next
+                        </Link>
                       </button>
                     </div>
                   </div>
